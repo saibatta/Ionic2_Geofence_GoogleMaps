@@ -27,6 +27,7 @@ export class GeofenceDetailsPage {
     private menu: MenuController,
 
 
+
   ) {
     this.geofenceService = geofenceService;
     this.geofence = navParams.get("geofence");
@@ -34,7 +35,8 @@ export class GeofenceDetailsPage {
     this.notificationText = this.geofence.notification.text;
     this._radius = this.geofence.radius;
     console.log(this.geofence.latitude + ',' + this.geofence.longitude)
-    this._latLng = Leaflet.latLng(this.geofence.latitude, this.geofence.longitude);
+    // this._latLng = Leaflet.latLng(this.geofence.latitude, this.geofence.longitude);
+    this._latLng = new google.maps.LatLng(this.geofence.latitude, this.geofence.longitude);
 
   }
 
@@ -70,7 +72,7 @@ export class GeofenceDetailsPage {
 
     this.map = new google.maps.Map(document.getElementById('map'), {
       zoom: minZoomLevel,
-      center: new google.maps.LatLng(38.50, -90.50),
+      center: this._latLng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
@@ -102,16 +104,11 @@ export class GeofenceDetailsPage {
       infoWindow.open(this.map, marker);
     });
 
-
     google.maps.event.addListener(marker, 'dragend', (event) => {
       //const latlng = event.latLng;
       this.latLng = event.latLng;
     });
-
-
   }
-
-
 
   saveChanges() {
     const geofence = this.geofence;
@@ -119,9 +116,7 @@ export class GeofenceDetailsPage {
     geofence.radius = this.radius;
     geofence.latitude = this.latLng.lat();
     geofence.longitude = this.latLng.lng();
-
     geofence.transitionType = parseInt(this.transitionType, 10);
-
     this.geofenceService.addOrUpdate(geofence).then(() => {
       this.nav.pop();
     });
