@@ -1,0 +1,8 @@
+{
+  "dependencies": {},
+  "devDependencies": {},
+  "ambientDependencies": {
+    "cordova-plugin-geofence": "file:../cordova/cordova-plugin-geofence/typings/cordova-plugin-geofence.d.ts",
+    "leaflet": "registry:dt/leaflet#0.7.3+20160330160843"
+  }
+}
