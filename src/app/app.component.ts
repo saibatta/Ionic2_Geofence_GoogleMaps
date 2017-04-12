@@ -1,6 +1,6 @@
 import { Component, ViewChild } from "@angular/core";
 import { Nav, Platform, AlertController, MenuController } from "ionic-angular";
-import * as Leaflet from "leaflet";
+//import * as Leaflet from "leaflet";
 
 import { GeofenceListPage } from "../pages/geofence-list/geofence-list";
 import { GeofenceService } from "../services/geofence-service";
@@ -22,7 +22,7 @@ export class MyApp {
     private menuCtrl: MenuController
   ) {
     platform.ready().then(() => {
-      Leaflet.Icon.Default.imagePath = "assets/leaflet/images/";
+     // Leaflet.Icon.Default.imagePath = "assets/leaflet/images/";
 
       if (window.geofence === undefined) {
         console.warn("Geofence Plugin not found. Using mock instead.");

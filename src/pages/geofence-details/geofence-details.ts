@@ -1,10 +1,11 @@
 import { Component } from "@angular/core";
 import { NavController, NavParams, MenuController } from "ionic-angular";
-import * as Leaflet from "leaflet";
+//import * as Leaflet from "leaflet";
 import { GeofenceService } from "../../services/geofence-service";
 
 declare var google;
 declare var circle;
+declare var marker;
 
 
 @Component({
@@ -67,16 +68,13 @@ export class GeofenceDetailsPage {
   }
 
   loadMap() {
-
-    var minZoomLevel = 12;
-
     this.map = new google.maps.Map(document.getElementById('map'), {
-      zoom: minZoomLevel,
+      zoom: 12,
       center: this._latLng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
-    let marker = new google.maps.Marker({
+    this.marker = new google.maps.Marker({
       map: this.map,
       draggable: true,
       animation: google.maps.Animation.DROP,
@@ -90,26 +88,47 @@ export class GeofenceDetailsPage {
       strokeColor: "red",
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: "red"
+      fillColor: "red",
+      clickable: true,
     });
-    this.circle.bindTo('center', marker, 'position');
-
-    let content = "<h4>Information!  {{this._latLng}}</h4>";
-
-    let infoWindow = new google.maps.InfoWindow({
-      content: content
-    });
-
-    google.maps.event.addListener(marker, 'click', () => {
-      infoWindow.open(this.map, marker);
-    });
-
-    google.maps.event.addListener(marker, 'dragend', (event) => {
-      //const latlng = event.latLng;
+    this.circle.bindTo('center', this.marker, 'position');
+    google.maps.event.addListener(this.marker, 'dragend', (event) => {
       this.latLng = event.latLng;
     });
-  }
 
+
+    // This event listener calls addMarker() when the circle is clicked.
+    google.maps.event.addListener(this.circle, 'click', (e) => {
+      this.markerPosition(e);
+    })
+
+    // This event listener calls addMarker() when the map is clicked.
+    google.maps.event.addListener(this.map, 'click', (e) => {
+      this.markerPosition(e);
+    });
+
+  }
+  //Changing marker along with circle
+  markerPosition(e) {
+    //removes previous flotted markers
+    if (this.marker != null) {
+      this.marker.setMap(null);
+      this.marker = null;
+    }
+    //Set every time as center
+    this.map.setCenter(e.latLng);
+    this.latLng = e.latLng;
+    this.marker = new google.maps.Marker({
+      map: this.map,
+      center: e.latLng,
+      draggable: true,
+      animation: google.maps.Animation.DROP,
+      position: this.map.getCenter()
+    });
+    this.circle.bindTo('center', this.marker, 'position');
+
+  }
+  //Saving changes 
   saveChanges() {
     const geofence = this.geofence;
     geofence.notification.text = this.notificationText;
